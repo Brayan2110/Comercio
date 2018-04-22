@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -16,6 +17,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,12 +105,19 @@ public class MainActivity extends AppCompatActivity {
         postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {
-                        // response
-                        sharedPreferences.edit().putString("token", response.substring(96,response.length()-2)).apply();
-                        sharedPreferences.edit().putString("id", response.substring(61,response.length()-277)).apply();
-                        Log.i("token",response.substring(96,response.length()-2));
-                        Log.i("id",response.substring(61,response.length()-277));
+                    public void onResponse(String response2) {
+                        JSONObject response = null;
+                        try {
+                            response = new JSONObject(response2);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            sharedPreferences.edit().putString("token", response.getString("token")).apply();
+                            sharedPreferences.edit().putString("id", response.getString("userId")).apply();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         Intent intent = new Intent(getApplicationContext(), listacomercios.class);
                         startActivity(intent);
                     }
@@ -116,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         // error
                         Log.d("Error.Response", "fallo");
+                        Toast.makeText(getApplicationContext(), "Ha Ocurrido un error", Toast.LENGTH_SHORT).show();
                     }
                 }
         ) {

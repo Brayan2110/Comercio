@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -40,6 +41,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -64,7 +75,9 @@ public class PedidosFragment extends Fragment {
     ArrayList cliente = new ArrayList();
     ArrayList productos = new ArrayList();
     ArrayList total = new ArrayList();
-
+    String correo;
+    String contraseña;
+    Session  session;
     ListAdapter adaptador;
     ListView lista;
     View vista;
@@ -131,6 +144,8 @@ public class PedidosFragment extends Fragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 update("Aceptada",String.valueOf(ordenid.get(index)));
+                                //Obtener el correo del cliente que hizo el pedido y pasarlo como parametro.
+                                // sendRegisterMail(email)
                             }
                         });
 
@@ -308,5 +323,39 @@ public class PedidosFragment extends Fragment {
         };
         RequestQueue MyRequestQueue = Volley.newRequestQueue(getContext());
         MyRequestQueue.add(putRequest);
+    }
+    private void sendRegisterMail(String email){
+        correo = "Foodmanagercr@gmail.com";
+        contraseña = "FoodManager#admin";
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host","smtp.gmail.com");
+        properties.put("mail.smtp.socketFactory.port","465");
+        properties.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+        properties.put("mail.smtp.auth","true");
+        properties.put("mail.smtp.port","465");
+
+        try{
+            session = Session.getDefaultInstance(properties, new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return  new PasswordAuthentication(correo,contraseña);
+                }
+            });
+
+            if(session!= null){
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(correo));
+                message.setSubject("<b>Bienvenido</b>");
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+                message.setContent("Tu pedido ha esta listo, gracias por utilizar food Manager","text/html; charset=utf-8");
+                Transport.send(message);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }
