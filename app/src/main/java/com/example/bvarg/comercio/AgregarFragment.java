@@ -49,7 +49,7 @@ public class AgregarFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     ArrayAdapter<String> adapter;
-    String[] categorias = {"Canasta Basica","Carnes", "Pastas","Salsas","Condimentos","Granos","Lacteos","Frutas y Verduras","Pan","Enlatados","Snacks","Golosinas","Refrescos","Higiene Personal","Productos para hogar","Licores"};
+    String[] categorias = {"Canasta básica","Carnes", "Pastas","Salsas","Condimentos","Granos","Lácteos","Frutas y Verduras","Pan","Enlatados","Snacks","Golosinas","Refrescos","Higiene Personal","Productos para hogar","Licores"};
     static String codigodebarra;
     static String idproducto;
     Button agregar;
@@ -228,7 +228,7 @@ public class AgregarFragment extends Fragment {
                                     Log.i("idproducto",mainObject.getString("_id"));
                                     Log.i("largo",String.valueOf(jsonArray.length()));
                                     //validarcodigo2(mainObject.getString("_id"),"5ad41eba8212a036c044e18b");
-                                    validarcodigo2(mainObject.getString("_id"),MainActivity.sharedPreferences.getString("idcomercio", ""));
+                                    validarcodigo2(mainObject.getString("_id"), MainActivity.sharedPreferences.getString("idcomercio", ""));
                                 }
                             }
                         }

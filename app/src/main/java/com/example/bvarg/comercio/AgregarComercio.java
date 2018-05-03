@@ -47,7 +47,6 @@ public class AgregarComercio extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!nombre.getText().toString().equals("") && !telefono.getText().toString().equals("")){
-                    Log.i("estoesafrica",MainActivity.sharedPreferences.getString("id", ""));
                     nuevocomercio(MainActivity.sharedPreferences.getString("id", ""));
                 }
                 else{

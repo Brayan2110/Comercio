@@ -28,7 +28,8 @@
         <activity android:name=".AgregarComercio" />
         <activity android:name=".SimpleScannerActivity" />
         <activity android:name=".SimpleScannerActivity2" />
-        <activity android:name=".Precio"></activity>
+        <activity android:name=".Precio" />
+        <activity android:name=".listaproductos"></activity>
     </application>
 
 </manifest>

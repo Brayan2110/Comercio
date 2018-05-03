@@ -1,12 +1,31 @@
 package com.example.bvarg.comercio;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 /**
@@ -27,6 +46,15 @@ public class HistorialFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    ArrayList fecha = new ArrayList();
+    ArrayList monto = new ArrayList();
+    ArrayList cliente = new ArrayList();
+    ArrayList productos = new ArrayList();
+    ArrayList total = new ArrayList();
+    ArrayList estado = new ArrayList();
+    ListAdapter adaptador;
+    ListView lista;
+    View vista;
     private OnFragmentInteractionListener mListener;
 
     public HistorialFragment() {
@@ -64,7 +92,23 @@ public class HistorialFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_historial, container, false);
+        vista = inflater.inflate(R.layout.fragment_pedidos, container, false);
+        lista = vista.findViewById(R.id.lista);
+
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String[] partes = productos.get(position).toString().replace("[","").replace("]","").split(",");
+                listaproductos.listaproductos = partes;
+                Intent intent = new Intent(getContext(), listaproductos.class);
+                startActivity(intent);
+
+            }
+        });
+
+        adaptador = new ArrayAdapter<String>(vista.getContext(), android.R.layout.simple_list_item_1, total);
+        llenar(MainActivity.sharedPreferences.getString("idcomercio", ""));
+        return vista;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -104,5 +148,65 @@ public class HistorialFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void llenar(String id){
+        // prepare the Request
+        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, "https://food-manager.herokuapp.com/orders/market/"+id, null,
+                new Response.Listener<JSONObject>()
+                {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // display response
+                        Log.d("Response", response.toString());
+                        try{
+                            Iterator<String> keys = response.keys();
+                            while (keys.hasNext())
+                            {
+                                // obtiene el nombre del objeto.
+                                String key = keys.next();
+                                Log.i("Parser", "objeto : " + key);
+                                JSONArray jsonArray = response.getJSONArray(key);
+                                Log.i("largo",String.valueOf(jsonArray.length()));
+                                for(int i= 0; i<response.getJSONArray(key).length(); i++){
+                                    JSONObject mainObject = new JSONObject(jsonArray.getString(i));
+
+                                    Log.i("precio",mainObject.getString("price"));
+                                    monto.add(mainObject.getString("price"));
+
+                                    String anho = mainObject.getString("date").substring(0,4);
+                                    String mes = mainObject.getString("date").substring(5,7);
+                                    String dia = mainObject.getString("date").substring(8,10);
+                                    Log.i("fecha",dia+"/"+mes+"/"+anho);
+                                    fecha.add(dia+"/"+mes+"/"+anho);
+                                    Log.i("productos",mainObject.getString("products"));
+                                    productos.add(mainObject.getString("products"));
+                                    estado.add(mainObject.getString("status"));
+                                    JSONObject mainObject2 = new JSONObject(mainObject.getString("user"));
+                                    //obtiene valores dentro del objeto
+                                    String nombre = mainObject2.getString("name");
+                                    Log.i("nombre",nombre);
+                                    cliente.add(nombre);
+                                    total.add("Monto: "+ monto.get(i)+"\n"+"Fecha: "+fecha.get(i)+"\n"+"Cliente: "+cliente.get(i)+"\n"+"Estado: "+estado.get(i));
+                                }
+                            }
+                            lista.setAdapter(adaptador);
+                        }
+                        catch (Exception e){
+
+                        }
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Error.Response", "No hay locales");
+                    }
+                }
+        );
+        // add it to the RequestQueue
+        RequestQueue MyRequestQueue = Volley.newRequestQueue(vista.getContext());
+        MyRequestQueue.add(getRequest);
     }
 }

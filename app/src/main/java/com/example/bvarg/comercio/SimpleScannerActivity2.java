@@ -92,9 +92,9 @@ public class SimpleScannerActivity2 extends Activity implements ZBarScannerView.
                                     JSONObject mainObject = new JSONObject(jsonArray.getString(0));
                                     Log.i("idproducto",mainObject.getString("_id"));
                                     Log.i("largo",String.valueOf(jsonArray.length()));
-                                    Log.i("idcomercio",MainActivity.sharedPreferences.getString("idcomercio", ""));
+                                    Log.i("idcomercio", MainActivity.sharedPreferences.getString("idcomercio", ""));
                                     //validarcodigo2(mainObject.getString("_id"),"5ad41eba8212a036c044e18b");
-                                    validarcodigo2(mainObject.getString("_id"),MainActivity.sharedPreferences.getString("idcomercio", ""));
+                                    validarcodigo2(mainObject.getString("_id"), MainActivity.sharedPreferences.getString("idcomercio", ""));
                                 }
                             }
                         }
@@ -191,7 +191,7 @@ public class SimpleScannerActivity2 extends Activity implements ZBarScannerView.
                     @Override
                     public void onResponse(String response) {
                         // response
-                        Log.d("Completaoo", "Producto eliminado");
+                        Log.d("Completado", "Producto eliminado");
                         Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(getApplicationContext(), Home.class);
                         startActivity(intent);

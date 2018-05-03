@@ -1,5 +1,6 @@
 package com.example.bvarg.comercio;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,7 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AgregarFragment.OnFragmentInteractionListener, EliminarFragment.OnFragmentInteractionListener, PedidosFragment.OnFragmentInteractionListener, HistorialFragment.OnFragmentInteractionListener, InventarioFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener, AgregarFragment.OnFragmentInteractionListener, PedidosFragment.OnFragmentInteractionListener, HistorialFragment.OnFragmentInteractionListener, InventarioFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,16 +89,14 @@ public class Home extends AppCompatActivity
         boolean fragmentseleccionado = false;
 
         if (id == R.id.nav_agregarproducto) {
-            Log.d("esteno","mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
             miFragment = new AgregarFragment();
             fragmentseleccionado = true;
 
         } else if (id == R.id.nav_eliminarproducto) {
-            miFragment = new EliminarFragment();
-            fragmentseleccionado = true;
+            Intent intent = new Intent(this, SimpleScannerActivity2.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_inventario) {
-            Log.d("estesi","qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
             miFragment = new InventarioFragment();
             fragmentseleccionado = true;
 
